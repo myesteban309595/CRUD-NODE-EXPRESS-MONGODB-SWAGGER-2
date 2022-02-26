@@ -7,6 +7,6 @@ const SUroute = express.Router();
 const controllersFunction = require('../controllers/usuario.controller');
 
 
-SUroute.get('/', controllersFunction.GetUser )
+SUroute.get('/ingreso', controllersFunction.GetUser )
 
 module.exports = SUroute;
