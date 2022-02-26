@@ -7,7 +7,7 @@ const products = require('./models/products.models')
 const users = require('./models/users.model')
 //? ****************************************************************
 
-const config = require('../config')
+const config = require('./config')
 require('dotenv').config();
 console.log(config)
 const MONGOOSE_URL = config.module.MONGOOSE_URL;

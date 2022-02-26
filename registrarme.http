@@ -1,0 +1,14 @@
+###
+
+POST http://localhost:3000/usuarios
+content-Type: application/json
+
+    {
+        "id": 4,
+        "name" : "crstian javier",
+        "lastname": "esteban valencia",
+        "phone": "3004568978",
+        "email" : "cristian@hotmail.com",
+        "sex": "M",
+        "password" : "holamundo123"
+    }

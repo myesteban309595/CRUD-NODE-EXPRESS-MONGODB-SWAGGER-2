@@ -7,7 +7,7 @@ const swaggerSpecs = swaggerJsDoc(openAPI)
 
 const express = require('express');  //* requerimos express
 const colors = require('colors');
-const config = require('../config')
+const config = require('./config')
 
 const app = express();
 const PORT = config.module.PORT //* configuracion puerto de escucha
