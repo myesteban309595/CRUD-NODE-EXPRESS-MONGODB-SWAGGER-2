@@ -3,63 +3,87 @@ const products = require('../models/products.models')
 
 //todo obtener productos
 
-const GetProducts = ()=> {
-    return products;
-}
+exports.GetProducts = async (req,res)=> {
 
-//todo obtener producto por id
-
-const GetProductsById = (id)=> {
-    return products.find(product => product.id == id);
-}
-
-//todo obtener producto por nombre o coincidencia
-
-const GetProductsByName = (Buscar) => {
-    return products.find(product => product.name.indexOf(Buscar) =! -1 );
+    const productos = await products.find();
+    console.log(productos);
+    res.json("se han obtenido los productos");
+    console.log("se han obtenido los productos");
 }
 
 //todo crear un nuevo producto
 
-const PostProduct = (NewProduct)=>{
+exports.PostProduct = async (req,res)=>{
 
-    products.push(NewProduct); //? capturo el nuevo producto aqui y lo almaceno alla
+    const {name,price,category} = req.body;
+
+    if(name && price && category) //* compruebo que si me esten enviando una informacion
+    {
+        const productExist = await products.findOne({name}) ; //! buscar producto por su nombre
+
+        if(productExist) //! validar un producto ya existente
+        {
+            console.log(("el producto ya esta registrado en la base de datos  ").bgRed);
+        }else {
+            
+            const NewProduct = new products ({name,price,category});
+            NewProduct.save();
+
+            console.log(("se ha agregado un nuevo producto ").bgGreen.black);
+            res.json(NewProduct);
+            res.json('se ha agregado un nuevo producto')
+        }
+
+    }else {
+        res.status(404).json("producto no ingresado, verifica errores en la solicitud")
+    }
 }
 
 //todo Editar un producto
 
-const EditProduct = (id,name,price,category) => {
+exports.EditProduct = async (req,res) => {
 
-    const EditedProduct = GetProductsById(id)  //? capturo el producto por id
-    console.log(EditedProduct);
-    EditedProduct.name = name;
-    EditedProduct.price = price;
-    EditedProduct.category = category;
+ const {name,price,category} = req.body;
+ const { _id } = req.params;
+
+ const productExist = await products.find(_id);
+ console.log(productExist);
+
+ if(productExist)
+ {
+     productExist.name = name
+     productExist.price = price
+     productExist.category = category 
+
+ }else{
+     res.status(404).json('productos no existe, id no encontrado')
+ }
 
 }
 
 //todo eliminar un producto
 
-const DeleteProduct = (id) => {
+exports.DeleteProduct = async (req,res) => {
 
-    const producto = GetProductsById(id)
-    
-    if(producto)
-    {
-        const Pindice = products.findIndex( e => e.id == id)
-        products.splice(Pindice,1);
-        //products.splice(products.indexOf(producto),1);
+    try{
+
+        const {_id} = req.params;
+        const exist = products.findById(_id);
+
+        if(exist)
+        {
+            await products.deleteOne({_id:_id});
+            res.json('producto eliminado')
+            console.log((`se ha eliminado el producto : ${exist.name}`).bgRed);
+
+        }
+
+    } catch(e) {
+        res.status(500).json(e)
     }
-    //console.log(products);
-   
-   //   const producto = GetProductsById(2)
-   //   console.log(producto);
-   //   const indice = products.findIndex(e=>e.id == 2);
-   //   console.log(indice);
-   //   products.splice(indice,1);
-   //   console.log("eliminado");
-   //   console.log(products);
+
+
 }
 
 
-module.exports = {GetProducts,GetProductsById,GetProductsByName,PostProduct,EditProduct,DeleteProduct};
+//module.exports = {GetProductsById,GetProductsByName,PostProduct,EditProduct,DeleteProduct};
