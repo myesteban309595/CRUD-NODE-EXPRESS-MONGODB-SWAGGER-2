@@ -1,0 +1,19 @@
+###
+GET http://localhost:3000/usuarios HTTP/1.1
+
+###
+PUT http://localhost:3000/usuarios/4 HTTP/1.1
+content-Type: application/json
+
+    {
+        "name" : "casimiro tibursio",
+        "lastname": "palacios casaosos",
+        "phone": "3124589636",
+        "email" : "tiburcio@hotmail.com",
+        "sex": "M",
+        "password" : "holamundo123"
+    }
+
+###
+
+DELETE http://localhost:3000/usuarios/4 HTTP/1.1

@@ -1,0 +1,27 @@
+###
+GET http://localhost:3000/productos HTTP/1.1
+###
+
+POST http://localhost:3000/productos
+content-Type: application/json
+
+    { 
+        "id": 5,
+        "name": "postobon",
+        "price": 7000,
+        "category" : "bebidas"
+    }
+
+###
+
+PUT http://localhost:3000/productos/2 HTTP/1.1
+content-Type: application/json
+
+    {
+        "name": "pollo",
+        "price": 8000,
+        "category" : "carnes frias"
+    }
+
+###
+DELETE http://localhost:3000/productos/5 HTTP/1.1

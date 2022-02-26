@@ -2,54 +2,97 @@ const users = require('../models/users.model')
 
 //todo obtener usuario
 
-const GetUser = ()=> {
-    return users;
-}
+exports.GetUser = async (req,res)=> {
 
-//todo obtener usuario por id
+   const usuarios =  await users.find();
+   console.log(usuarios);
+   console.log(("se han obtenido los usuarios"));
+   res.json(usuarios);
 
-const GetUserById = (id)=>{
-   return users.find(u => u.id == id)
 }
 
 //todo agregar nuevo usuario
 
-const AddUser = (NewUser)=> {
+exports.AddUser = async (req,res)=> {
 
-    return users.push(NewUser);
-}
+    const {name,lastname,phone,email,sex,addreses,password,admin,state} = req.body
 
-//todo eliminar un usuario por id
-
-const DeleteUser = (id)=>{
-
-    const  usuario = GetUserById(id); //? capturo el usuario correspondiente a ese id
-    
-    if(usuario)
+    if(name && lastname && phone && email && sex && addreses && password && state)
     {
-        const Uindice = users.findIndex(i => i.id == id);
-        users.splice(Uindice,1) ;   
+        const userExist = await users.findOne({name});
+
+        if(userExist)
+        {
+            res.json('este usuario ya existe en la base de datos')
+            console.log(('usuario ya existe en la base de datos ').bgRed);
+
+        }else {
+            const NewUser = new usuarios({name,lastname,phone,email,sex,addreses,password,admin,state});
+            NewUser.save();
+
+            console.log(("se ha creado un nuevo usuario ").bg.Green.black);
+            res.json(NewUser);
+            res.json('se ha creado un nuevo usuario')
+        }
+
+    }else{
+        res.status(404).json('ingrese datos validos')
     }
+
+
 }
 
 //todo modificar un usuario existente
 
-const UpdateUser = (id,name,lastname,phone,email,sex,password)=> {
+exports.UpdateUser = async (req,res)=> {
 
-    const usuario = GetUserById(id);
-    console.log(usuario)
-    //console.log(usuario.name);
+    const {name,lastname,phone,email,sex,addreses,password,admin,state} = req.body;
+    const {_id} = req.params;
+    const existUser = await users.find(_id)
+    console.log(existUser);
 
-        usuario.name = name
-        usuario.lastname = lastname
-        usuario.phone = phone
-        usuario.email = email
-        usuario.sex = sex,
-        usuario.password = password,
-        usuario.admin = false
-        
-        // const actualizado = usuario.lastname
-        // console.log(actualizado);
+    if(existUser)
+    {
+        existUser.name = name
+        existUser.lastname = lastname
+        existUser.phone = phone
+        existUser.email = email
+        existUser.sex = sex
+        existUser.addreses = addreses
+        existUser.password = password
+        existUser.state = state
+
+        res.json('usuario actualizado'); 
+        console.log((`se ha actualizado el usuario ${existUser.name}  `).bgBlue.black);
+
+    }else{
+        res.status(404).json('error al actualizar, No existe este usuario en la base de datos')
+    }
 }
 
-module.exports = {UpdateUser,DeleteUser,AddUser,GetUserById,GetUser}
+//todo eliminar un usuario por id
+
+exports.DeleteUser = async (req,res)=>{
+
+    try {
+
+        const {_id} = req.params;
+        const userToDelete = users.findById(_id)
+    
+        if(userToDelete)
+        {
+            await users.deleteOne({_id:_id});
+            res.json('usuario eliminado')
+            console.log((`se ha eliminado el usuario : ${userToDelete.name}`).bgRed);
+        }
+
+    }catch(e) {
+
+        res.status(500).json(e)
+
+    }
+
+}
+
+
+//module.exports = {UpdateUser,DeleteUser,AddUser,GetUserById,GetUser}
